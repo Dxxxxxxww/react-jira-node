@@ -3,12 +3,20 @@ import { getToken, verifyToken } from './utils/token'
 import { users } from './db/users'
 import { User } from './types/users'
 import { ERR_CODE } from './utils/constant'
+import { nextTick } from 'process'
 
 function registerRouter(app: Application) {
     // 注册
     register(app)
     // 登录
     login(app)
+    app.use((req, res, next) => {
+        const { authorization } = req.headers
+        const token = authorization?.slice(7)
+        const decode = verifyToken(token as string)
+        console.log('decode---', decode)
+        next(res.json(decode))
+    })
     // 用户
     getUsers(app)
     // 项目
@@ -48,6 +56,8 @@ function login(app: Application) {
             res.json({
                 code: ERR_CODE.OK,
                 result: {
+                    id: existUser.id,
+                    name: existUser.name,
                     token: getToken({
                         uid: existUser.uid,
                         scope: existUser.scope
@@ -66,7 +76,22 @@ function login(app: Application) {
 }
 
 function getUsers(app: Application) {
-    app.get('/api/users', (req: Request, res: Response) => {
+    app.get('/api/users', (result, req: Request, res: Response) => {
+        const { selectOptions } = users
+        // if (!!decode?.scope) {
+        res.json({
+            code: ERR_CODE.OK,
+            result
+            // {
+            //     userOptions: selectOptions
+            // }
+        })
+        // }
+    })
+}
+
+function getProjects(app: Application) {
+    app.get('/api/projects', (req: Request, res: Response) => {
         const { authorization } = req.headers
         const token = authorization?.slice(7)
         const decode = verifyToken(token as string)
@@ -80,12 +105,6 @@ function getUsers(app: Application) {
                 }
             })
         }
-    })
-}
-
-function getProjects(app: Application) {
-    app.get('/api/projects', (req: Request, res: Response) => {
-        res.send('成功啦')
     })
 }
 

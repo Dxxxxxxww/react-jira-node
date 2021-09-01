@@ -14,7 +14,7 @@ export const users: UsersDB = {
             uid: 1,
             username: '123',
             password: '123',
-            name: '',
+            name: 'admin',
             scope: AUTH_SCOPE.superAdmin
         }
     ],
