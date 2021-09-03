@@ -5,8 +5,9 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "nodemon --watch ./src/**/*.ts --exec \"ts-node\" ./src/index.ts",
-        "dev": "\"ts-node\" ./src/index.ts"
+        "dev:build": "tsc -w",
+        "dev:start": "nodemon node ./build/index.js",
+        "dev": "concurrently npm:dev:*"
     },
     "author": "",
     "license": "ISC",
@@ -19,6 +20,7 @@
     "devDependencies": {
         "@types/express": "^4.17.13",
         "@types/node": "^16.7.1",
+        "concurrently": "^6.2.1",
         "ts-node": "^10.2.1",
         "typescript": "^4.3.5"
     }

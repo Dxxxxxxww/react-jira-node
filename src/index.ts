@@ -1,11 +1,7 @@
-// const express = require('express')
-// const cors = require('cors')
-// const bodyParser = require('body-parser')
-import bodyParser from 'body-parser'
 import express from 'express'
 // @ts-ignore
 import cors from 'cors'
-import router from './router'
+import router from './routers/router'
 
 const app = express()
 const port = 9002
@@ -17,10 +13,10 @@ app.use(
     })
 )
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: false }))
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(express.json())
 
 // 注册接口
 router(app)

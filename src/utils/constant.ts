@@ -13,5 +13,6 @@ export const AUTH_SCOPE = {
 
 export const ERR_CODE = {
     OK : 1,
-    ERROR: 2
+    ERROR: 2,
+    NOT_ALLOW: 3
 }
