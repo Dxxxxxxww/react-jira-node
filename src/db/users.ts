@@ -10,8 +10,8 @@ interface UsersDB {
 export const users: UsersDB = {
     userList: [
         {
-            id: 1,
-            uid: 1,
+            id: 1, // 真正的 id
+            uid: 1, // 暴露给前端的 id
             username: '123',
             password: '123',
             name: 'admin',

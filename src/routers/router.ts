@@ -15,6 +15,8 @@ function registerRouter(app: Application) {
     getUsers(app)
     // 项目
     getProjects(app)
+    // 通过 token 获取用户信息
+    getInfo(app)
     testConnection(app)
 }
 
@@ -50,10 +52,10 @@ function login(app: Application) {
             res.json({
                 code: ERR_CODE.OK,
                 result: {
-                    id: existUser.id,
+                    id: existUser.uid, // 将 uid 返回给前端，而不是把真正的 id 返回
                     name: existUser.name,
                     token: getToken({
-                        uid: existUser.uid,
+                        id: existUser.id,
                         scope: existUser.scope
                     })
                 }
@@ -96,6 +98,32 @@ function getProjects(app: Application) {
     })
 }
 
+function getInfo(app: Application) {
+    app.get('/api/info', (req, res) => {
+        const { decode, token } = (req as RequestData)._data
+        const user = users.userList.find((item) => item.id === decode.id)
+        console.log(user)
+
+        if (user) {
+            res.json({
+                code: ERR_CODE.OK,
+                result: {
+                    id: user.uid, // 将 uid 返回给前端，而不是把真正的 id 返回
+                    username: user.username,
+                    name: user.name,
+                    token
+                }
+            })
+        } else {
+            res.json({
+                code: ERR_CODE.NOT_ALLOW,
+                result: {},
+                message: '请重新登录！'
+            })
+        }
+    })
+}
+
 function testConnection(app: Application) {
     app.get('/api/test', (req: Request, res: Response) => {
         res.send('成功啦')
@@ -108,7 +136,8 @@ function _verifyToken(req: Request, res: Response, next: NextFunction) {
     const decode = verifyToken(token as string)
     if (!!decode) {
         ;(req as RequestData)._data = {
-            decode
+            decode,
+            token
         }
         next()
     } else {

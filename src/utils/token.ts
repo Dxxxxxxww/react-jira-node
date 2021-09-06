@@ -3,16 +3,17 @@ import jwt from 'jsonwebtoken'
 import { CONFIG } from './constant'
 
 export const getToken = ({
-    uid,
+    id,
     scope
 }: {
-    uid: number
+    id: number
     scope: number
 }): string => {
     const secretKey = CONFIG.security.secretKey
+    // 用真正的 id 来制作 token
     return jwt.sign(
         {
-            uid,
+            id,
             scope
         },
         secretKey
