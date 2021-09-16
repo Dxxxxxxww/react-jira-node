@@ -68,7 +68,7 @@ function login(app: Application) {
             code: ERR_CODE.OK,
             result: {
                 id: existUser.uid, // 将 uid 返回给前端，而不是把真正的 id 返回
-                name: existUser.name,
+                name: existUser.username,
                 token: getToken({
                     id: existUser.id,
                     scope: existUser.scope
