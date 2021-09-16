@@ -45,29 +45,36 @@ function login(app: Application) {
         const { userList } = users
         const existUser = userList.find(
             (item: { username: string; password: string }) =>
-                item.username === username && item.password === password
+                item.username === username
         )
 
-        if (!!existUser) {
-            res.json({
-                code: ERR_CODE.OK,
-                result: {
-                    id: existUser.uid, // 将 uid 返回给前端，而不是把真正的 id 返回
-                    name: existUser.name,
-                    token: getToken({
-                        id: existUser.id,
-                        scope: existUser.scope
-                    })
-                }
-            })
-        } else {
-            res.json({
+        if (!existUser) {
+            return res.json({
                 code: ERR_CODE.ERROR,
-                result: {
-                    errMsg: '账号或密码不正确'
-                }
+                result: {},
+                message: '账号未注册，请先注册'
             })
         }
+
+        if (existUser?.password !== password) {
+            return res.json({
+                code: ERR_CODE.ERROR,
+                result: {},
+                message: '账号或密码不正确，请重试'
+            })
+        }
+
+        return res.json({
+            code: ERR_CODE.OK,
+            result: {
+                id: existUser.uid, // 将 uid 返回给前端，而不是把真正的 id 返回
+                name: existUser.name,
+                token: getToken({
+                    id: existUser.id,
+                    scope: existUser.scope
+                })
+            }
+        })
     })
 }
 
@@ -90,9 +97,12 @@ function getProjects(app: Application) {
         res.json({
             code: ERR_CODE.OK,
             result: {
-                projectList: !!personId
-                    ? projectList.filter((item) => item.personId === ~~personId)
-                    : projectList
+                projectList:
+                    personId != 0
+                        ? projectList.filter(
+                              (item) => item.personId == personId
+                          )
+                        : projectList
             }
         })
     })
@@ -102,7 +112,6 @@ function getInfo(app: Application) {
     app.get('/api/info', (req, res) => {
         const { decode, token } = (req as RequestData)._data
         const user = users.userList.find((item) => item.id === decode.id)
-        console.log(user)
 
         if (user) {
             res.json({

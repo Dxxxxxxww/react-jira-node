@@ -11,8 +11,8 @@ export const AUTH_SCOPE = {
     superAdmin: 32
 }
 
-export const ERR_CODE = {
-    OK : 1,
-    ERROR: 2,
-    NOT_ALLOW: 3
+export enum ERR_CODE {
+    OK = 1,
+    ERROR,
+    NOT_ALLOW
 }
