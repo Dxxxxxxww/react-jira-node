@@ -109,7 +109,7 @@ function getProjects(app: Application) {
 }
 
 function getInfo(app: Application) {
-    app.get('/api/info', (req, res) => {
+    app.get('/api/userInfo', (req, res) => {
         const { decode, token } = (req as RequestData)._data
         const user = users.userList.find((item) => item.id === decode.id)
 
