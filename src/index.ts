@@ -4,7 +4,7 @@ import cors from 'cors'
 import router from './routers/router'
 
 const app = express()
-const port = 9002
+const port = 9205
 
 app.use(
     cors({

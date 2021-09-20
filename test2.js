@@ -1,8 +1,8 @@
-var Abc = /** @class */ (function () {
-    function Abc() {
+"use strict";
+class Abc {
+    constructor() {
         this.a = 1;
         this.b = 'b';
-        var c = 'c';
+        const c = 'c';
     }
-    return Abc;
-}());
+}
