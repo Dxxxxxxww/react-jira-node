@@ -92,17 +92,23 @@ function getUsers(app: Application) {
 
 function getProjects(app: Application) {
     app.get('/api/projects', (req: Request, res: Response) => {
-        const { personId } = req.query
+        const { personId, name } = req.query
         const { projectList } = projects
-        res.json({
+        let projectRes =
+            personId != 0
+                ? projectList.filter((item) => item.personId == personId)
+                : projectList
+
+        if (!!name) {
+            projectRes = projectList.filter((item) =>
+                item.name.includes(name as string)
+            )
+        }
+
+        return res.json({
             code: ERR_CODE.OK,
             result: {
-                projectList:
-                    personId != 0
-                        ? projectList.filter(
-                              (item) => item.personId == personId
-                          )
-                        : projectList
+                projectList: projectRes
             }
         })
     })
