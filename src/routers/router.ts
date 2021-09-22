@@ -95,7 +95,7 @@ function getProjects(app: Application) {
         const { personId, name } = req.query
         const { projectList } = projects
         let projectRes =
-            personId != 0
+            personId && personId != 0
                 ? projectList.filter((item) => item.personId == personId)
                 : projectList
 
