@@ -94,11 +94,12 @@ function getProjects(app: Application) {
     app.get('/api/projects', (req: Request, res: Response) => {
         const { personId } = req.query
         const { projectList } = projects
+
         res.json({
             code: ERR_CODE.OK,
             result: {
                 projectList:
-                    personId != 0
+                    personId && personId != 0
                         ? projectList.filter(
                               (item) => item.personId == personId
                           )
