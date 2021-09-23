@@ -2,22 +2,21 @@ import { Application, NextFunction, Request, Response } from 'express'
 import { getToken, verifyToken } from '../utils/token'
 import { users } from '../db/users'
 import { ERR_CODE } from '../utils/constant'
-import { RequestData } from '../types/system-exted'
-import { projects } from '../db/projects'
+import projectRouter from './project-router'
+import userRouter from './user-router'
 
 function registerRouter(app: Application) {
     // 注册
     register(app)
     // 登录
     login(app)
-    app.use(_verifyToken)
-    // 用户
-    getUsers(app)
-    // 项目
-    getProjects(app)
-    // 通过 token 获取用户信息
-    getInfo(app)
+    // 测试
     testConnection(app)
+    app.use(_verifyToken)
+    // 用户模块
+    userRouter(app)
+    // 项目模块
+    projectRouter(app)
 }
 
 function register(app: Application) {
@@ -75,62 +74,6 @@ function login(app: Application) {
                 })
             }
         })
-    })
-}
-
-function getUsers(app: Application) {
-    app.get('/api/users', (req: Request, res: Response) => {
-        const { selectOptions } = users
-        res.json({
-            code: ERR_CODE.OK,
-            result: {
-                userOptions: selectOptions
-            }
-        })
-    })
-}
-
-function getProjects(app: Application) {
-    app.get('/api/projects', (req: Request, res: Response) => {
-        const { personId } = req.query
-        const { projectList } = projects
-
-        res.json({
-            code: ERR_CODE.OK,
-            result: {
-                projectList:
-                    personId && personId != 0
-                        ? projectList.filter(
-                              (item) => item.personId == personId
-                          )
-                        : projectList
-            }
-        })
-    })
-}
-
-function getInfo(app: Application) {
-    app.get('/api/userInfo', (req, res) => {
-        const { decode, token } = (req as RequestData)._data
-        const user = users.userList.find((item) => item.id === decode.id)
-
-        if (user) {
-            res.json({
-                code: ERR_CODE.OK,
-                result: {
-                    id: user.uid, // 将 uid 返回给前端，而不是把真正的 id 返回
-                    username: user.username,
-                    name: user.name,
-                    token
-                }
-            })
-        } else {
-            res.json({
-                code: ERR_CODE.NOT_ALLOW,
-                result: {},
-                message: '请重新登录！'
-            })
-        }
     })
 }
 
