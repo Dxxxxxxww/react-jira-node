@@ -1,20 +1,49 @@
 import mysql from 'mysql'
+import { SQL_CONFIG } from '../utils/config'
+import { isVoid } from '../utils/utils'
 
-const pool = mysql.createPool({
-    host: 'localhost',
-    port: '3306',
-    user: 'root',
-    password: '123456',
-    database: 'jira'
-})
+interface queryParams {
+    sql: string | mysql.QueryOptions
+    args?: any
+    cb: (res: any) => void
+}
 
-export const query = (sql, args, cb) => {
-    if (args) {
-        
+const pool = mysql.createPool(SQL_CONFIG)
+
+export const queryDb = ({ sql, args, cb }: queryParams) => {
+    if (isVoid(args)) {
+        return connectWithoutParams({ sql, cb })
     }
-    pool.getConnection((err, connection) => {
-        connection.query(sql, args, (err, rows) => {
+    return connectWithParams({ sql, args, cb })
+}
 
+const connectWithoutParams = ({ sql, cb }: queryParams) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.log('[connection ERROR] - ',err.message);
+            return;
+        }
+
+        connection.query(sql, (error, results) => {
+            if (error) {
+                console.log('[SELECT ERROR] - ',error.message);
+                return;
+            }
+            cb(results)
+            connection.release()
+        })
+    })
+
+}
+
+const connectWithParams = ({ sql, args, cb }: queryParams) => {
+    pool.getConnection((err, connection) => {
+        if (err) throw err
+
+        connection.query(sql, args, (error, results) => {
+            cb(results)
+            connection.release()
+            if (error) throw error
         })
     })
 }

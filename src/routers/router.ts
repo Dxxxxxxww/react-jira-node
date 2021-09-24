@@ -4,6 +4,8 @@ import { users } from '../db/users'
 import { ERR_CODE } from '../utils/constant'
 import projectRouter from './project-router'
 import userRouter from './user-router'
+import { queryDb } from '../db'
+import { RequestData } from '../types/system-exted'
 
 function registerRouter(app: Application) {
     // 注册
@@ -79,7 +81,13 @@ function login(app: Application) {
 
 function testConnection(app: Application) {
     app.get('/api/test', (req: Request, res: Response) => {
-        res.send('成功啦')
+        queryDb({
+            sql: 'SELECT * FROM test',
+            cb(result) {
+                console.log(result)
+                res.send(result)
+            }
+        })
     })
 }
 
