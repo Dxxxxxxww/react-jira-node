@@ -1,6 +1,5 @@
 let isFunction = (value: any) =>
-     value && Object.toString.call(value) === '[object Function]'
-
+    value && Object.toString.call(value) === '[object Function]'
 
 if (
     typeof /./ !== 'function' &&
@@ -21,4 +20,12 @@ export { isFunction }
 //     console.log(undefined)
 // }
 // aa() // log: 10
-export const isVoid = (value: any) =>  value === void 0 || value === null || value === ''
+export const isVoid = (value: any) =>
+    value === void 0 || value === null || value === ''
+
+export const isString = (str: any) => typeof str === 'string'
+
+export const toCamelCase = (item: string): string =>
+    item.replace(/\_([a-z])/g, (all: string, letter: string) => {
+        return letter.toUpperCase()
+    })

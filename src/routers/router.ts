@@ -81,13 +81,13 @@ function login(app: Application) {
 
 function testConnection(app: Application) {
     app.get('/api/test', (req: Request, res: Response) => {
-        queryDb({
-            sql: 'SELECT * FROM test',
-            cb(result) {
-                console.log(result)
-                res.send(result)
-            }
-        })
+        queryDb('SELECT * FROM test')
+            .then((result: any) => {
+                console.log('result==', result)
+            })
+            .catch((err: Error) => {
+                console.log(err)
+            })
     })
 }
 

@@ -1,7 +1,9 @@
-import { Projects } from '../types/projects'
+import { Project } from '../types/projects'
+import { toCamelCase } from '../utils/utils'
+import { queryDb } from './index'
 // 就地维护类型
 interface ProjectsDB {
-    projectList: Array<Projects>
+    projectList: Array<Project>
 }
 
 export const projects: ProjectsDB = {
@@ -42,4 +44,25 @@ export const projects: ProjectsDB = {
             created: 1546900800000
         }
     ]
+}
+
+export const getProjectsDb = () => {
+    return queryDb(`SELECT * FROM project_list`)
+        .then((result: any[]) =>
+            result.reduce((camelArr: Project[], item: Project) => {
+                const camelItem = Object.keys(item).reduce((initVal, key) => {
+                    initVal[toCamelCase(key)] = item[key]
+                    return initVal
+                }, {} as Project)
+                camelArr.push(camelItem)
+                return camelArr
+            }, [] as Project[])
+        )
+        .catch(Promise.reject)
+}
+
+export const editProjectDb = (id: number, pin: boolean) => {
+    return queryDb(
+        `UPDATE project_list SET pin = ${Number(pin)} WHERE id = ${id}`
+    )
 }

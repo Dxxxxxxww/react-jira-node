@@ -1,3 +1,4 @@
+import { queryDb } from '../db'
 import { AUTH_SCOPE } from '../utils/constant'
 // 全局通用类型
 import { User, BasicUser } from '../types/users'
@@ -36,4 +37,8 @@ export const users: UsersDB = {
             name: '王文静'
         }
     ]
+}
+
+export const getUsers = () => {
+    // queryDb({ sql: 'SELECT * FROM USERS', cb(reslut) {} })
 }
