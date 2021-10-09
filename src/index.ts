@@ -2,6 +2,7 @@ import express from 'express'
 // @ts-ignore
 import cors from 'cors'
 import router from './routers/router'
+import './db'
 
 const app = express()
 const port = 9205
