@@ -1,7 +1,7 @@
 import { Application, Request, Response } from 'express'
-import { users } from '../db/users'
 import { ERR_CODE } from '../utils/constant'
 import { RequestData } from '../types/system-exted'
+import { getUserInfo, getUserOptions } from '../model/users-model'
 
 const userRouter = (app: Application) => {
     getUsers(app)
@@ -9,29 +9,30 @@ const userRouter = (app: Application) => {
 }
 
 const getUsers = (app: Application) => {
-    app.get('/api/users', (req: Request, res: Response) => {
-        const { selectOptions } = users
+    app.get('/api/users', async (req: Request, res: Response) => {
+        // const { selectOptions } = users
+        const users = await getUserOptions()
         res.json({
             code: ERR_CODE.OK,
             result: {
-                userOptions: selectOptions
+                userOptions: users
             }
         })
     })
 }
 // 通过 token 获取用户信息
 const getInfo = (app: Application) => {
-    app.get('/api/userInfo', (req, res) => {
+    app.get('/api/userInfo', async (req, res) => {
         const { decode, token } = (req as RequestData)._data
-        const user = users.userList.find((item) => item.id === decode.id)
+        const user = await getUserInfo(decode.id)
 
         if (user) {
             res.json({
                 code: ERR_CODE.OK,
                 result: {
-                    id: user.uid, // 将 uid 返回给前端，而不是把真正的 id 返回
+                    id: user.id,
                     username: user.username,
-                    name: user.name,
+                    name: user.realName,
                     token
                 }
             })

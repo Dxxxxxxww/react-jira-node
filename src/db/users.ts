@@ -45,19 +45,20 @@
 import sequelize from './index'
 import Sequelize, { Model } from 'sequelize'
 
-class User extends Model {}
+export class Users extends Model {
+    public id: number = 0
+    public username: string = ''
+    public password: string = ''
+    public realName: string = ''
+    public scope: number = 0
+}
 
-User.init(
+Users.init(
     {
         id: {
             type: Sequelize.INTEGER.UNSIGNED,
             primaryKey: true,
-            autoIncrement: true,
-        },
-        uid: {
-            type: Sequelize.INTEGER.UNSIGNED,
-            unique: true,
-            allowNull: false
+            autoIncrement: true
         },
         username: {
             type: Sequelize.STRING(32),

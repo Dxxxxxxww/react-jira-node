@@ -1,11 +1,11 @@
 import { Application, NextFunction, Request, Response } from 'express'
 import { getToken, verifyToken } from '../utils/token'
-import { users } from '../db/users'
+import { Users } from '../db/users'
 import { ERR_CODE } from '../utils/constant'
 import projectRouter from './project-router'
 import userRouter from './user-router'
-import { queryDb } from '../db'
 import { RequestData } from '../types/system-exted'
+import {getUser} from "../model/users-model";
 
 function registerRouter(app: Application) {
     // 注册
@@ -13,7 +13,7 @@ function registerRouter(app: Application) {
     // 登录
     login(app)
     // 测试
-    testConnection(app)
+    // testConnection(app)
     app.use(_verifyToken)
     // 用户模块
     userRouter(app)
@@ -41,13 +41,9 @@ function register(app: Application) {
 }
 
 function login(app: Application) {
-    app.post('/api/login', (req, res) => {
+    app.post('/api/login', async (req, res) => {
         const { username, password } = req.body
-        const { userList } = users
-        const existUser = userList.find(
-            (item: { username: string; password: string }) =>
-                item.username === username
-        )
+        const existUser: Users | null = await getUser(username)
 
         if (!existUser) {
             return res.json({
@@ -56,7 +52,6 @@ function login(app: Application) {
                 message: '账号未注册，请先注册'
             })
         }
-
         if (existUser?.password !== password) {
             return res.json({
                 code: ERR_CODE.ERROR,
@@ -68,8 +63,8 @@ function login(app: Application) {
         return res.json({
             code: ERR_CODE.OK,
             result: {
-                id: existUser.uid, // 将 uid 返回给前端，而不是把真正的 id 返回
-                name: existUser.username,
+                id: existUser.id,
+                username: existUser.username,
                 token: getToken({
                     id: existUser.id,
                     scope: existUser.scope
@@ -79,17 +74,17 @@ function login(app: Application) {
     })
 }
 
-function testConnection(app: Application) {
-    app.get('/api/test', (req: Request, res: Response) => {
-        queryDb('SELECT * FROM test')
-            .then((result: any) => {
-                console.log('result==', result)
-            })
-            .catch((err: Error) => {
-                console.log(err)
-            })
-    })
-}
+// function testConnection(app: Application) {
+    // app.get('/api/test', (req: Request, res: Response) => {
+    //     queryDb('SELECT * FROM test')
+    //         .then((result: any) => {
+    //             console.log('result==', result)
+    //         })
+    //         .catch((err: Error) => {
+    //             console.log(err)
+    //         })
+    // })
+// }
 
 function _verifyToken(req: Request, res: Response, next: NextFunction) {
     const { authorization } = req.headers
