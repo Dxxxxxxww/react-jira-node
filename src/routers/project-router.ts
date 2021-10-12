@@ -1,6 +1,6 @@
 import { Application, Request, Response } from 'express'
-import { editProjectDb, getProjectsDb, projects } from '../db/projects'
 import { ERR_CODE } from '../utils/constant'
+import { editProjectModel, getProjectsModel } from '../model/projects-model'
 
 const projectRouter = (app: Application) => {
     getProjects(app)
@@ -8,44 +8,40 @@ const projectRouter = (app: Application) => {
 }
 
 const getProjects = (app: Application) => {
-    app.get('/api/projects', (req: Request, res: Response) => {
-
-        getProjectsDb()
-            .then((result: any) => {
-                res.json({
-                    code: ERR_CODE.OK,
-                    result: {
-                        projectList: result
-                    }
-                })
+    app.get('/api/projects', async (req: Request, res: Response) => {
+        const projects = await getProjectsModel()
+        if (projects) {
+            return res.json({
+                code: ERR_CODE.OK,
+                result: {
+                    projectList: projects
+                }
             })
-            .catch((err: Error) => {
-                res.json({
-                    code: ERR_CODE.ERROR,
-                    result: {},
-                    message: err.message
-                })
-            })
+        }
+        return res.json({
+            code: ERR_CODE.ERROR,
+            result: {},
+            message: '操作失败'
+        })
     })
 }
 
 const editProject = (app: Application) => {
-    app.patch('/api/projects/edit', (req, res) => {
+    app.patch('/api/projects/edit', async (req, res) => {
         const { id, pin } = req.body
-        editProjectDb(id, pin)
-            .then((result: any) => {
-                res.json({
-                    code: ERR_CODE.OK,
-                    result: {}
-                })
+
+        const result = await editProjectModel(id, pin ? 1 : 0)
+        if (result[0]) {
+            return res.json({
+                code: ERR_CODE.OK,
+                result: {}
             })
-            .catch((err: Error) => {
-                res.json({
-                    code: ERR_CODE.ERROR,
-                    result: {},
-                    message: err.message
-                })
-            })
+        }
+        return res.json({
+            code: ERR_CODE.ERROR,
+            result: {},
+            message: '操作失败'
+        })
     })
 }
 

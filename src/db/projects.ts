@@ -70,7 +70,7 @@
 import sequelize from './index'
 import Sequelize, { Model } from 'sequelize'
 
-class Projects extends Model {}
+export class Projects extends Model {}
 
 Projects.init(
     {

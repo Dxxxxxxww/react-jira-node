@@ -5,7 +5,7 @@ import { ERR_CODE } from '../utils/constant'
 import projectRouter from './project-router'
 import userRouter from './user-router'
 import { RequestData } from '../types/system-exted'
-import {getUser} from "../model/users-model";
+import {getUserModel} from "../model/users-model";
 
 function registerRouter(app: Application) {
     // 注册
@@ -43,8 +43,8 @@ function register(app: Application) {
 function login(app: Application) {
     app.post('/api/login', async (req, res) => {
         const { username, password } = req.body
-        const existUser: Users | null = await getUser(username)
-
+        const existUser: Users | null = await getUserModel(username)
+        console.log(existUser)
         if (!existUser) {
             return res.json({
                 code: ERR_CODE.ERROR,

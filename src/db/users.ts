@@ -46,11 +46,12 @@ import sequelize from './index'
 import Sequelize, { Model } from 'sequelize'
 
 export class Users extends Model {
-    public id: number = 0
-    public username: string = ''
-    public password: string = ''
-    public realName: string = ''
-    public scope: number = 0
+    // 踩坑记录：这里定义数据类型时不能给默认值，否则查询到的数据会被这里给覆盖掉
+    public id: number | undefined
+    public username: string | undefined
+    public password: string | undefined
+    public realName: string | undefined
+    public scope: number | undefined
 }
 
 Users.init(
